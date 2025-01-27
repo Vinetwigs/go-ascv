@@ -37,30 +37,57 @@ go get github.com/Vinetwigs/go-ascv@latest
 Here’s how you can get started with `go-ascv`:
 
 ```go
-
 package main
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/Vinetwigs/go-ascv"
 )
 
 func main() {
-	// Create a new ASCIIVideo file
-	video := ascv.NewASCIIVideo(8, 4, 30, true)
-
-	// Add frames
-	video.AddFrame("AAAABBBBCCCCDDDD") // Frame 1
-	video.AddFrame("XXXXXXXXYYYYZZZZ") // Frame 2
-
-	// Save to file
-	err := video.Save("example.ascv")
-	if err != nil {
-		fmt.Println("Error saving file:", err)
-		return
+	// Basic example: Write and read a .ascv file
+	header := ascv.Header{
+		Magic:       [4]byte{'A', 'A', 'V', 'F'},
+		Version:     1,
+		Width:       8,
+		Height:      4,
+		FPS:         30,
+		Frames:      2,
+		Compression: 1, // RLE compression enabled
+		Charset:     0,
+		Reserved:    [16]byte{}, // Set "Reserved" field to zero
 	}
 
-	fmt.Println("ASCIIVideo file saved successfully!")
+	// Create the frame with RLE compression
+	frameContent := []byte("AAABBBCCCDDDEE")
+	encodedContent := ascv.EncodeRLE(frameContent)
+	frame := ascv.Frame{
+		Size:    len(encodedContent), // Size after compression
+		Content: encodedContent,
+	}
+
+	// Writing the .ascv file
+	outputFile := "test_write_read.ascv" // Example path
+	err := ascv.WriteASCV(outputFile, header, []ascv.Frame{frame})
+	if err != nil {
+		log.Fatalf("Error while writing: %v", err)
+	}
+	fmt.Printf("File %s written!\n", outputFile)
+
+	// Reading the file
+	headerRead, framesRead, err := ascv.ReadASCV(outputFile)
+	if err != nil {
+		log.Fatalf("Error while reading: %v", err)
+	}
+	fmt.Printf("Header read: %v\n", headerRead)
+
+	// Decode and print the frames
+	for i, frame := range framesRead {
+		decoded, _ := ascv.DecodeRLE(frame.Content)
+		fmt.Printf("Decoded frame %d: %s\n", i+1, decoded)
+	}
 }
 ```
 
