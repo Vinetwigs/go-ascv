@@ -111,7 +111,7 @@ The .ascv file format is designed for space-efficient storage of ASCII art video
 | CHARSET | Integer | 1 byte | Character set identifier |
 | RESERVED | Reserved | 16 bytes | Reserved for future extensions |
 
-For a full breakdown of the format, refer to the [specifications](https://github.com/Vinetwigs/go-ascv/blob/main/docs/ASCV_File_Format_Specifications.pdf).
+For a full breakdown of the format, refer to the [specifications](https://github.com/Vinetwigs/ascv-file-specifications/blob/main/ASCV_File_Format_Specifications.pdf).
 
 ## 🛠️ Supported Compression
 
